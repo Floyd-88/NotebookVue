@@ -11,14 +11,16 @@
         {{ `Статья_${index + 1}` }}
       </button>
     </div>
-    <div class="text">
+    <div class="text" v-if="articles.length > 0">
       {{ article }}
     </div>
+    <NotArticles v-else/>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import NotArticles from './UniversalComponent/NotArticles.vue'
 
 const props = defineProps<{ articles: string[] }>()
 const articleNum = ref<number>(0)
@@ -39,6 +41,7 @@ function changeArticleNum(index: number) {
 .buttons {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   width: 100%;
   gap: 10px;
 }
@@ -64,4 +67,5 @@ function changeArticleNum(index: number) {
 .active {
   color: #F58529;
 }
+
 </style>

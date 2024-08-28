@@ -71,4 +71,5 @@ function handleAddArticle(article: string) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

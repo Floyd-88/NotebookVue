@@ -1,14 +1,19 @@
 <template>
   <div class="wrapper">
     <div class="buttons" v-if="articleNum === -1">
-      <button
-        class="buttons-btn"
-        @click="openArticle(index)"
-        v-for="(button, index) in articles"
-        :key="index"
-      >
-        {{ `Статья_${index + 1}` }}
-      </button>
+      <template v-if="articles.length > 0">
+        <button
+          class="buttons-btn"
+          @click="openArticle(index)"
+          v-for="(button, index) in articles"
+          :key="index"
+        >
+          {{ `Статья_${index + 1}` }}
+        </button>
+      </template>
+
+      <NotArticles v-else />
+
       <button class="buttons-btn" @click="addArticle">+</button>
       <input type="text" placeholder="start typing|" v-model.trim="textArticle" />
     </div>
@@ -21,6 +26,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import NotArticles from './UniversalComponent/NotArticles.vue'
 
 const articleNum = ref<number>(-1)
 const textArticle = ref<string>('')
@@ -44,11 +50,10 @@ function closeArticle() {
   // emit('handleAddArticle')
 }
 
-
 function addArticle() {
   if (textArticle.value.length > 2) {
     emit('handleAddArticle', textArticle.value)
-    textArticle.value = '' 
+    textArticle.value = ''
   }
 }
 </script>
