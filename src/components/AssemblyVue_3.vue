@@ -44,11 +44,11 @@ function closeArticle() {
   // emit('handleAddArticle')
 }
 
-// Функция добавления статьи
+
 function addArticle() {
   if (textArticle.value.length > 2) {
     emit('handleAddArticle', textArticle.value)
-    textArticle.value = '' // Очистка текстового поля после добавления
+    textArticle.value = '' 
   }
 }
 </script>

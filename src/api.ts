@@ -2,7 +2,7 @@ const apiHost = import.meta.env.VITE_API_HOST
 
 export const setArticles = async (data: any) => {
   try {
-    console.log('Отправка данных на сервер');
+    console.log(JSON.stringify(data));
 
     const response = await fetch(`${apiHost}`, {
         method: 'POST',
@@ -35,13 +35,13 @@ export const getArticles = async () => {
     })
     if (response.ok) {
       const articles = await response.json()
-      return articles as string[] // Убедитесь, что это массив строк
+      return articles as string[]
     } else {
       console.error('Ошибка запроса на сервер', response.statusText)
-      return [] // Возвращаем пустой массив в случае ошибки
+      return []
     }
   } catch (error) {
     console.error('Ошибка получения данных:', error)
-    return [] // Возвращаем пустой массив в случае ошибки
+    return []
   }
 }
