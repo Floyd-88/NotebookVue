@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'Consolas';
+  src: url('/assets/fonts/font.ttf') format('truetype');
+}
+
+body {
+  background-color: black;
+  font-family: Consolas;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 17.56px;
+  color: #efefef;
+}
+#app {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  width: 360px;
+  height: 100vh;
+  padding: 26px 16px 16px;
+}
+
+.wrapper {
+  width: 100%;
+}
