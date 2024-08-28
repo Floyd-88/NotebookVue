@@ -6,9 +6,9 @@
 body {
   background-color: black;
   font-family: Consolas;
-  font-size: 15px;
+  font-size: 4vw;
   font-weight: 400;
-  line-height: 17.56px;
+  /* line-height: 17.56vw; */
   color: #efefef;
 }
 #app {
@@ -18,12 +18,26 @@ body {
 
 .container {
   display: flex;
-  width: 360px;
+  width: 100vw;
   height: 100vh;
-  padding: 26px 16px 16px;
+  padding: 5vw 2.5vw 2.5vw;
 }
 
 .wrapper {
-  width: 100%;
+  width: 100vw;
   overflow: auto;
 }
+
+/* Медиа-запрос для экранов шире 900px */
+@media (min-width: 900px) {
+  body {
+    font-size: 1.5vw;
+  }
+
+  .container {
+    width: 30vw;
+    padding: 3vw 1vw 1vw;
+  }
+}
+
+

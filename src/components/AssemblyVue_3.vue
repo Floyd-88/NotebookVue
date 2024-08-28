@@ -62,15 +62,14 @@ function addArticle() {
 .buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 100%;
+  gap: 4vw;
 }
 .buttons-btn {
-  height: 60px;
+  height: 14vw;
   color: #f58529;
   background-color: #202020;
-  border: 1px solid #000000;
-  border-radius: 10px;
+  border: none;
+  border-radius: 1vw;
   cursor: pointer;
 }
 
@@ -79,10 +78,10 @@ function addArticle() {
 }
 
 input {
-  height: 60px;
+  height: 14vw;
   text-align: center;
-  border: 1px solid #000000;
-  border-radius: 10px;
+  border: none;
+  border-radius: 1vw;
   background-color: #202020;
   color: #6f6f6f;
 }
@@ -102,16 +101,36 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60px;
-  height: 60px;
+  width: 15vw;
+  height: 15vw;
   background-color: #202020;
-  border: 1px solid #000000;
-  border-radius: 10px;
+  border: none;
+  border-radius: 1vw;
   color: #f58529;
   cursor: pointer;
 }
 
 .article-btn:hover {
   background-color: #393939;
+}
+
+/* Медиа-запрос для экранов шире 900px */
+@media (min-width: 900px) {
+  .buttons {
+  gap: 2vw;
+}
+
+  .buttons-btn {
+  height: 7vw;
+}
+
+.article-btn {
+  width: 7vw;
+  height: 7vw;
+}
+
+input {
+  height: 7vw;
+}
 }
 </style>

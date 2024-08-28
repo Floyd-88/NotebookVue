@@ -41,17 +41,17 @@ function changeArticleNum(index: number) {
 .buttons {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   width: 100%;
   gap: 10px;
 }
 
 .buttons-btn {
-  width: 80px;
-  height: 25px;
+  width: 28vw;
+  height: 8vw;
   background-color: #202020;
-  border: 1px solid #000000;
-  border-radius: 5px;
+  border: none;
+  border-radius: 1vw;
   color: #FFFFFF;
   cursor: pointer;
 }
@@ -61,11 +61,24 @@ function changeArticleNum(index: number) {
 }
 
 .text {
-  margin-top: 25px;
+  margin-top: 7vw;
 }
 
 .active {
   color: #F58529;
+}
+
+/* Медиа-запрос для экранов шире 900px */
+@media (min-width: 900px) {
+  .buttons {
+  gap: 2vw;
+}
+
+  .buttons-btn {
+  width: 10vw;
+  height: 3vw;
+}
+
 }
 
 </style>
