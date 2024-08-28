@@ -1,16 +1,17 @@
 <template>
   <div class="container">
-    <component :is="currentComponent" :articles="articles" @addArticle="handleAddArticle" />
+    <component :is="currentComponent" :articles="articles" @handleAddArticle="handleAddArticle"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getArticles, setArticles } from './api'
 import { useInactivityTimer } from './useInactivityTimer'
-const AssemblyVue_1 = defineAsyncComponent(() => import('./components/AssemblyVue_1.vue'))
-const AssemblyVue_2 = defineAsyncComponent(() => import('./components/AssemblyVue_2.vue'))
-const AssemblyVue_3 = defineAsyncComponent(() => import('./components/AssemblyVue_3.vue'))
+import AssemblyVue_1 from './components/AssemblyVue_1.vue'
+import AssemblyVue_2 from './components/AssemblyVue_2.vue'
+import AssemblyVue_3 from './components/AssemblyVue_3.vue'
+
 
 const articles = ref<string[]>([
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboru1.',
@@ -59,18 +60,6 @@ const { startTimer: startInactivityTimer, stopTimer: stopInactivityTimer } = use
   saveArticles,
   30000
 )
-
-// Определяем события, которые будут переданы компоненту
-// const componentEvents = computed(() => {
-//   const buildType = import.meta.env.VITE_BUILD_TYPE
-//   // Поддержка события addArticle только для AssemblyVue_3
-//   if (buildType === 'сборка3') {
-//     return {
-//       'addArticle': с
-//     }
-//   }
-//   return {}
-// })
 
 function handleAddArticle(article: string) {
   if (article) {

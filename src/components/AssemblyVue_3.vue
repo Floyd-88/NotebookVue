@@ -26,7 +26,7 @@ const articleNum = ref<number>(-1)
 const textArticle = ref<string>('')
 
 const props = defineProps<{ articles: string[] }>()
-const emit = defineEmits<{ (e: 'addArticle', payload?: string): void }>()
+const emit = defineEmits<{ (e: 'handleAddArticle', payload: string): void }>()
 
 const article = computed(() => {
   if (articleNum.value >= 0) {
@@ -41,14 +41,13 @@ function openArticle(id: number) {
 
 function closeArticle() {
   articleNum.value = -1
-  emit('addArticle')
+  // emit('handleAddArticle')
 }
 
 // Функция добавления статьи
 function addArticle() {
-  const trimmedText = textArticle.value.trim()
-  if (trimmedText.length > 2) {
-    emit('addArticle', trimmedText)
+  if (textArticle.value.length > 2) {
+    emit('handleAddArticle', textArticle.value)
     textArticle.value = '' // Очистка текстового поля после добавления
   }
 }
