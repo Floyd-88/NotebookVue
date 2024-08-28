@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <component :is="currentComponent" :articles="articles" v-on="componentEvents" />
+    <component :is="currentComponent" :articles="articles" @addArticle="handleAddArticle" />
   </div>
 </template>
 
@@ -61,16 +61,16 @@ const { startTimer: startInactivityTimer, stopTimer: stopInactivityTimer } = use
 )
 
 // Определяем события, которые будут переданы компоненту
-const componentEvents = computed(() => {
-  const buildType = import.meta.env.VITE_BUILD_TYPE
-  // Поддержка события addArticle только для AssemblyVue_3
-  if (buildType === 'сборка3') {
-    return {
-      'addArticle': handleAddArticle
-    }
-  }
-  return {}
-})
+// const componentEvents = computed(() => {
+//   const buildType = import.meta.env.VITE_BUILD_TYPE
+//   // Поддержка события addArticle только для AssemblyVue_3
+//   if (buildType === 'сборка3') {
+//     return {
+//       'addArticle': с
+//     }
+//   }
+//   return {}
+// })
 
 function handleAddArticle(article: string) {
   if (article) {
