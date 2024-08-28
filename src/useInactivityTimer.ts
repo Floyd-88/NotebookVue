@@ -2,7 +2,7 @@ import { ref, onUnmounted } from 'vue';
 
 // Таймер для отслеживания неактивности
 export function useInactivityTimer(callback: () => void, delay: number) {
-  const inactivityTimeout = ref<NodeJS.Timeout | null>(null);
+  const inactivityTimeout = ref<number | null>(null);
 
   // Функция запуска таймера
   const startTimer = () => {
