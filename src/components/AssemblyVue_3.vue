@@ -1,71 +1,120 @@
 <template>
   <div class="wrapper">
-    <div class="buttons" v-if="articleNum === -1">
-      <template v-if="articles.length > 0">
-        <button
-          class="buttons-btn"
-          @click="openArticle(index)"
-          v-for="(button, index) in articles"
-          :key="index"
-        >
-          {{ `Статья_${index + 1}` }}
-        </button>
-      </template>
-
+    <div class="wrapper-items" v-if="!article">
+      <ul class="buttons" v-if="articles.length > 0">
+        <li class="item-button" v-for="articleItem in articles" :key="articleItem.id">
+          <button class="buttons-btn" @click="openArticle(articleItem)">
+            {{ articleItem.title }}
+          </button>
+        </li>
+      </ul>
       <NotArticles v-else />
 
-      <button class="buttons-btn" @click="addArticle">+</button>
-      <input type="text" placeholder="start typing|" v-model.trim="textArticle" />
+      <div class="wrapper-input">
+        <button class="buttons-btn" @click="startNewArticle" v-if="isTextArticle">+</button>
+        <input
+          type="text"
+          placeholder="start typing|"
+          v-else
+          ref="titleInput"
+          v-model.trim="titleArticle"
+          @blur="handleBlur"
+          @keydown.enter="handleBlur"
+        />
+      </div>
     </div>
+
     <div class="article-text" v-else>
-      <div class="text">{{ article }}</div>
+      <AssemblyVueText v-model="textArticle" />
       <button class="article-btn" @click="closeArticle">&lt;</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref, nextTick, watch } from 'vue'
 import NotArticles from './UniversalComponent/NotArticles.vue'
+import type { ArticleI } from '@/types/types'
+import AssemblyVueText from './AssemblyVueText.vue'
 
-const articleNum = ref<number>(-1)
+defineProps<{ articles: ArticleI[] }>()
+const emit = defineEmits<{
+  (e: 'handleAddArticle', payload: ArticleI): void
+  (e: 'handleChangeArticle', payload: ArticleI): void
+  (e: 'saveArticles'): void
+}>()
+
+const article = ref<ArticleI | null>(null)
+const titleArticle = ref<string>('')
+const isTextArticle = ref<boolean>(true)
 const textArticle = ref<string>('')
+const titleInput = ref<HTMLInputElement | null>(null)
 
-const props = defineProps<{ articles: string[] }>()
-const emit = defineEmits<{ (e: 'handleAddArticle', payload: string): void }>()
-
-const article = computed(() => {
-  if (articleNum.value >= 0) {
-    return props.articles[articleNum.value]
-  }
-  return ''
-})
-
-function openArticle(id: number) {
-  articleNum.value = id
+function openArticle(articleItem: ArticleI) {
+  textArticle.value = articleItem.text
+  article.value = articleItem
 }
 
 function closeArticle() {
-  articleNum.value = -1
-  // emit('handleAddArticle')
+  emit('saveArticles')
+  textArticle.value = ''
+  article.value = null
+}
+
+function startNewArticle() {
+  isTextArticle.value = false
+  nextTick(() => {
+    titleInput.value?.focus()
+  })
+}
+
+function handleBlur() {
+  if (titleArticle.value.length >= 1) {
+    addArticle()
+  }
+  isTextArticle.value = true
 }
 
 function addArticle() {
-  if (textArticle.value.length > 2) {
-    emit('handleAddArticle', textArticle.value)
-    textArticle.value = ''
+  const newArticle: ArticleI = {
+    id: Date.now(),
+    title: titleArticle.value,
+    text: ''
   }
+  emit('handleAddArticle', newArticle)
+  titleArticle.value = ''
 }
+
+watch(textArticle, () => {
+  if (article.value) {
+    const updatedArticle = { ...article.value, text: textArticle.value }
+    emit('handleChangeArticle', updatedArticle)
+  }
+})
 </script>
 
 <style scoped>
+.wrapper {
+  width: 100%;
+  height: 100vh;
+}
+
+.wrapper-items {
+  flex: 1;
+  overflow: auto;
+  max-height: 100vh;
+  padding-bottom: 10vw;
+}
+
 .buttons {
   display: flex;
   flex-direction: column;
   gap: 4vw;
 }
+
 .buttons-btn {
   height: 14vw;
+  width: 100%;
   color: #f58529;
   background-color: #202020;
   border: none;
@@ -77,8 +126,13 @@ function addArticle() {
   background-color: #383838;
 }
 
+.wrapper-input {
+  margin-top: 4vw;
+}
+
 input {
   height: 14vw;
+  width: 100%;
   text-align: center;
   border: none;
   border-radius: 1vw;
@@ -86,11 +140,14 @@ input {
   color: #6f6f6f;
 }
 
+input:focus {
+  border: 1px solid #f58529;
+  outline: none;
+}
+
 .article-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   height: 100%;
+  box-sizing: border-box;
 }
 
 .text {
@@ -98,9 +155,9 @@ input {
 }
 
 .article-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
   width: 15vw;
   height: 15vw;
   background-color: #202020;
@@ -117,20 +174,34 @@ input {
 /* Медиа-запрос для экранов шире 900px */
 @media (min-width: 900px) {
   .buttons {
-  gap: 2vw;
-}
+    gap: 2vw;
+  }
 
   .buttons-btn {
-  height: 7vw;
-}
+    height: 7vw;
+  }
 
-.article-btn {
-  width: 7vw;
-  height: 7vw;
-}
+  .wrapper-input {
+    margin-top: 2vw;
+  }
 
-input {
-  height: 7vw;
-}
+  .article-btn {
+    width: 7vw;
+    height: 7vw;
+  }
+
+  input {
+    height: 7vw;
+  }
+
+  .wrapper-items {
+    overflow: hidden;
+    padding-bottom: 5vw;
+    scrollbar-width: thin;
+  }
+
+  .wrapper-items:hover {
+    overflow: auto;
+  }
 }
 </style>

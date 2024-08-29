@@ -7,5 +7,6 @@
 <style scoped>
 .not-articles {
   text-align: center;
+  color: #f58529;
 }
 </style>

@@ -1,23 +1,23 @@
+import type { ArticleI } from './types/types'
+
 const apiHost = import.meta.env.VITE_API_HOST
 
-export const setArticles = async (data: any) => {
+export const setArticles = async (data: ArticleI[]) => {
   try {
-    console.log(JSON.stringify(data));
-
     const response = await fetch(`${apiHost}`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        const articles = await response.json()
-        return articles
-      } else {
-        console.error('Ошибка сервера:', response.statusText)
-        return []
+      method: 'POST',
+      body: JSON.stringify([]),
+      headers: {
+        'Content-Type': 'application/json'
       }
+    })
+    if (response.ok) {
+      const articles = await response.json()
+      return articles as ArticleI[]
+    } else {
+      console.error('Ошибка сервера:', response.statusText)
+      return []
+    }
   } catch (error) {
     console.error('Ошибка отправки данных:', error)
   }
@@ -25,8 +25,6 @@ export const setArticles = async (data: any) => {
 
 export const getArticles = async () => {
   try {
-    console.log('Получение данных с сервера');
-
     const response = await fetch(`${apiHost}`, {
       method: 'GET',
       headers: {
@@ -35,7 +33,7 @@ export const getArticles = async () => {
     })
     if (response.ok) {
       const articles = await response.json()
-      return articles as string[]
+      return articles as ArticleI[]
     } else {
       console.error('Ошибка запроса на сервер', response.statusText)
       return []

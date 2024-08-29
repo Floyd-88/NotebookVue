@@ -1,9 +1,15 @@
 <template>
   <div class="container">
-    <template v-if="isLoader">
-      <component :is="currentComponent" :articles="articles" @handleAddArticle="handleAddArticle" />
+    <LoaderVue v-if="isLoader" />
+    <template v-else>
+      <component
+        :is="currentComponent"
+        :articles="articles"
+        @handleAddArticle="handleAddArticle"
+        @handleChangeArticle="handleChangeArticle"
+        @saveArticles="saveArticles"
+      />
     </template>
-    <LoaderVue v-else />
   </div>
 </template>
 
@@ -15,11 +21,11 @@ import AssemblyVue_1 from './components/AssemblyVue_1.vue'
 import AssemblyVue_2 from './components/AssemblyVue_2.vue'
 import AssemblyVue_3 from './components/AssemblyVue_3.vue'
 import LoaderVue from './components/UniversalComponent/LoaderVue.vue'
+import type { ArticleI } from './types/types'
 
-const articles = ref<string[]>([])
+const articles = ref<ArticleI[]>([])
 
 const currentComponent = computed(() => {
-  console.log(import.meta.env.VITE_BUILD_TYPE)
   const buildType = import.meta.env.VITE_BUILD_TYPE
   switch (buildType) {
     case 'сборка1':
@@ -32,30 +38,29 @@ const currentComponent = computed(() => {
       return AssemblyVue_1
   }
 })
+const isLoader = ref<boolean>(false)
 
-const isLoader = ref<boolean>(true)
-
-// Загрузка статей при монтировании
 onMounted(async () => {
-  isLoader.value = false
-  const fetchedArticles = await getArticles()
   isLoader.value = true
-  if (fetchedArticles.length > 0) {
-    articles.value = fetchedArticles
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+  try {
+    const fetchedArticles = await getArticles()
+    if (fetchedArticles.length > 0) {
+      articles.value = fetchedArticles
+    }
+  } finally {
+    isLoader.value = false
+
+    startInactivityTimer() // Запускаем таймер
   }
-  startInactivityTimer() // Запускаем таймер
 })
 
-// Сохранение статей при демонтировании компонента
 onUnmounted(async () => {
-  await saveArticles()
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
   stopInactivityTimer() // Останавливаем таймер
 })
-
-// Функция для сохранения статей
-const saveArticles = async () => {
-  await setArticles(articles.value)
-}
 
 // Настройка таймера для неактивности
 const { startTimer: startInactivityTimer, stopTimer: stopInactivityTimer } = useInactivityTimer(
@@ -63,13 +68,35 @@ const { startTimer: startInactivityTimer, stopTimer: stopInactivityTimer } = use
   30000
 )
 
-function handleAddArticle(article: string) {
-  if (article) {
-    articles.value.push(article)
+function handleAddArticle(newArticle: ArticleI) {
+  if (newArticle) {
+    articles.value.push(newArticle)
   }
   saveArticles()
 }
+
+function handleChangeArticle(article: ArticleI) {
+  const index = articles.value.findIndex((item) => item.id === article.id)
+
+  if (index !== -1) {
+    articles.value[index] = article
+  }
+}
+
+async function saveArticles() {
+  await setArticles(articles.value)
+}
+
+// Обработка событий перед выгрузкой страницы
+function handleBeforeUnload() {
+  saveArticles()
+}
+
+function handleVisibilityChange() {
+  if (document.visibilityState === 'hidden') {
+    saveArticles()
+  }
+}
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
