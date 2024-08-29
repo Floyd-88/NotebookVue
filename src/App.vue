@@ -41,6 +41,7 @@ const currentComponent = computed(() => {
 const isLoader = ref<boolean>(false)
 
 onMounted(async () => {
+  
   isLoader.value = true
   window.addEventListener('beforeunload', handleBeforeUnload)
   document.addEventListener('visibilitychange', handleVisibilityChange)

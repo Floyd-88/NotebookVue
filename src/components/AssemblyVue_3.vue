@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="wrapper-items" v-if="!article">
+    <div class="wrapper-items" v-if="!article" @scroll="handleScroll">
       <ul class="buttons" v-if="articles.length > 0">
         <li class="item-button" v-for="articleItem in articles" :key="articleItem.id">
           <button class="buttons-btn" @click="openArticle(articleItem)">
@@ -68,17 +68,15 @@ function startNewArticle() {
   })
 }
 
-onMounted(async () => {
-  window.addEventListener('beforeunload', handleBeforeUnload)
-})
-
-onUnmounted(async () => {
-  window.removeEventListener('beforeunload', handleBeforeUnload)
-})
+function handleScroll() {
+  if (isTextArticle.value === false) {
+    handleBlur()
+    isTextArticle.value = true
+  }
+}
 
 function handleBlur() {
   if (titleArticle.value.length >= 1) {
-
     addArticle()
   }
   isTextArticle.value = true
@@ -90,7 +88,6 @@ function addArticle() {
     title: titleArticle.value,
     text: ''
   }
-  console.log(newArticle)
   emit('handleAddArticle', newArticle)
   titleArticle.value = ''
 }
@@ -104,10 +101,17 @@ watch(textArticle, () => {
 
 // Обработка событий перед выгрузкой страницы
 function handleBeforeUnload(event: BeforeUnloadEvent) {
-  event.preventDefault();
+  event.preventDefault()
   handleBlur()
-
 }
+
+onMounted(async () => {
+  window.addEventListener('beforeunload', handleBeforeUnload)
+})
+
+onUnmounted(async () => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
 </script>
 
 <style scoped>
@@ -192,6 +196,12 @@ input:focus {
 @media (min-width: 900px) {
   .buttons {
     gap: 2vw;
+  }
+
+  .item-button {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
   .buttons-btn {

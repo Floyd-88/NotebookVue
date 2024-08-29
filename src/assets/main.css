@@ -5,6 +5,7 @@ body {
   font-weight: 400;
   /* line-height: 17.56vw; */
   color: #efefef;
+  list-style: none;
 }
 #app {
   display: flex;
