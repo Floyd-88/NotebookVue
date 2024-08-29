@@ -59,6 +59,7 @@ onMounted(async () => {
 onUnmounted(async () => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
+  saveArticles()
   stopInactivityTimer() // Останавливаем таймер
 })
 
@@ -88,12 +89,14 @@ async function saveArticles() {
 }
 
 // Обработка событий перед выгрузкой страницы
-function handleBeforeUnload() {
+function handleBeforeUnload(event: BeforeUnloadEvent) {
+  event.preventDefault()
   saveArticles()
 }
 
 function handleVisibilityChange() {
   if (document.visibilityState === 'hidden') {
+    console.log('Visibility change detected: saving articles')
     saveArticles()
   }
 }

@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, onUnmounted, onMounted } from 'vue'
 import NotArticles from './UniversalComponent/NotArticles.vue'
 import type { ArticleI } from '@/types/types'
 import AssemblyVueText from './AssemblyVueText.vue'
@@ -68,6 +68,14 @@ function startNewArticle() {
   })
 }
 
+onMounted(async () => {
+  window.addEventListener('beforeunload', handleBeforeUnload)
+})
+
+onUnmounted(async () => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
+
 function handleBlur() {
   if (titleArticle.value.length >= 1) {
     addArticle()
@@ -91,6 +99,13 @@ watch(textArticle, () => {
     emit('handleChangeArticle', updatedArticle)
   }
 })
+
+// Обработка событий перед выгрузкой страницы
+function handleBeforeUnload(event: BeforeUnloadEvent) {
+  event.preventDefault();
+  handleBlur()
+
+}
 </script>
 
 <style scoped>

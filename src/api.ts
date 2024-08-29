@@ -11,6 +11,7 @@ export const setArticles = async (data: ArticleI[]) => {
         'Content-Type': 'application/json'
       }
     })
+
     if (response.ok) {
       const articles = await response.json()
       return articles as ArticleI[]
