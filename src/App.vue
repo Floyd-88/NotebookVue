@@ -59,7 +59,6 @@ onMounted(async () => {
 onUnmounted(async () => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
-  saveArticles()
   stopInactivityTimer() // Останавливаем таймер
 })
 

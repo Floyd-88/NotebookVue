@@ -78,6 +78,7 @@ onUnmounted(async () => {
 
 function handleBlur() {
   if (titleArticle.value.length >= 1) {
+
     addArticle()
   }
   isTextArticle.value = true
@@ -89,6 +90,7 @@ function addArticle() {
     title: titleArticle.value,
     text: ''
   }
+  console.log(newArticle)
   emit('handleAddArticle', newArticle)
   titleArticle.value = ''
 }

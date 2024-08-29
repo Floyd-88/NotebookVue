@@ -1,8 +1,3 @@
-@font-face {
-  font-family: 'Consolas';
-  src: url('/assets/fonts/font.ttf') format('truetype');
-}
-
 body {
   background-color: #000000;
   font-family: Consolas;
