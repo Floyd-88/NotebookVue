@@ -6,7 +6,7 @@ export const setArticles = async (data: ArticleI[]) => {
   try {
     const response = await fetch(`${apiHost}`, {
       method: 'POST',
-      body: JSON.stringify([]),
+      body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json'
       }
