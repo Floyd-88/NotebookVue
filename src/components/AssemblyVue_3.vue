@@ -1,27 +1,16 @@
 <template>
   <div class="wrapper">
-    <div class="wrapper-items" v-if="!article" @scroll="handleScroll">
-      <ul class="buttons" v-if="articles.length > 0">
-        <li class="item-button" v-for="articleItem in articles" :key="articleItem.id">
-          <button class="buttons-btn" @click="openArticle(articleItem)">
-            {{ articleItem.title }}
-          </button>
-        </li>
-      </ul>
-      <NotArticles v-else />
+    <div class="wrapper-items" v-if="!article" @scroll="resetArticleMode">
+      <ArticleList :articles="articles" @openArticle="openArticle" />
 
-      <div class="wrapper-input">
-        <button class="buttons-btn" @click="startNewArticle" v-if="isTextArticle">+</button>
-        <input
-          type="text"
-          placeholder="start typing|"
-          v-else
-          ref="titleInput"
-          v-model.trim="titleArticle"
-          @blur="handleBlur"
-          @keydown.enter="handleBlur"
-        />
-      </div>
+      <NotArticles v-if="articles.length === 0" />
+
+      <ArticleInput
+        :isTextArticle="isTextArticle"
+        :titleArticle="titleArticle"
+        @saveArticleIfNeeded="saveArticleIfNeeded"
+        @updateTitle="updateTitle"
+      />
     </div>
 
     <div class="article-text" v-else>
@@ -32,10 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, watch, onUnmounted, onMounted } from 'vue'
+import { ref, watch, onUnmounted, onMounted } from 'vue'
+import ArticleList from './ArticleList.vue'
+import ArticleInput from './ArticleInput.vue'
+import AssemblyVueText from './AssemblyVueText.vue'
 import NotArticles from './UniversalComponent/NotArticles.vue'
 import type { ArticleI } from '@/types/types'
-import AssemblyVueText from './AssemblyVueText.vue'
 
 defineProps<{ articles: ArticleI[] }>()
 const emit = defineEmits<{
@@ -48,7 +39,6 @@ const article = ref<ArticleI | null>(null)
 const titleArticle = ref<string>('')
 const isTextArticle = ref<boolean>(true)
 const textArticle = ref<string>('')
-const titleInput = ref<HTMLInputElement | null>(null)
 
 function openArticle(articleItem: ArticleI) {
   textArticle.value = articleItem.text
@@ -59,37 +49,38 @@ function closeArticle() {
   emit('saveArticles')
   textArticle.value = ''
   article.value = null
-}
-
-function startNewArticle() {
-  isTextArticle.value = false
-  nextTick(() => {
-    titleInput.value?.focus()
-  })
-}
-
-function handleScroll() {
-  if (isTextArticle.value === false) {
-    handleBlur()
-    isTextArticle.value = true
-  }
-}
-
-function handleBlur() {
-  if (titleArticle.value.length >= 1) {
-    addArticle()
-  }
   isTextArticle.value = true
 }
 
 function addArticle() {
-  const newArticle: ArticleI = {
-    id: Date.now(),
-    title: titleArticle.value,
-    text: ''
+  if (titleArticle.value.length > 0) {
+    const newArticle: ArticleI = {
+      id: Date.now(),
+      title: titleArticle.value,
+      text: ''
+    }
+    emit('handleAddArticle', newArticle)
+    titleArticle.value = ''
   }
-  emit('handleAddArticle', newArticle)
-  titleArticle.value = ''
+}
+
+function updateTitle(title: string) {
+  titleArticle.value = title
+  isTextArticle.value = false
+}
+
+function resetArticleMode() {
+  if (!isTextArticle.value) {
+    saveArticleIfNeeded()
+    isTextArticle.value = true
+  }
+}
+
+function saveArticleIfNeeded() {
+  if (titleArticle.value.length > 0) {
+    addArticle()
+  }
+  isTextArticle.value = true
 }
 
 watch(textArticle, () => {
@@ -102,7 +93,8 @@ watch(textArticle, () => {
 // Обработка событий перед выгрузкой страницы
 function handleBeforeUnload(event: BeforeUnloadEvent) {
   event.preventDefault()
-  handleBlur()
+  saveArticleIfNeeded()
+  event.returnValue = ''
 }
 
 onMounted(async () => {
@@ -118,6 +110,8 @@ onUnmounted(async () => {
 .wrapper {
   width: 100%;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .wrapper-items {
@@ -125,45 +119,6 @@ onUnmounted(async () => {
   overflow: auto;
   max-height: 100vh;
   padding-bottom: 10vw;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 4vw;
-}
-
-.buttons-btn {
-  height: 14vw;
-  width: 100%;
-  color: #f58529;
-  background-color: #202020;
-  border: none;
-  border-radius: 1vw;
-  cursor: pointer;
-}
-
-.buttons-btn:hover {
-  background-color: #383838;
-}
-
-.wrapper-input {
-  margin-top: 4vw;
-}
-
-input {
-  height: 14vw;
-  width: 100%;
-  text-align: center;
-  border: none;
-  border-radius: 1vw;
-  background-color: #202020;
-  color: #6f6f6f;
-}
-
-input:focus {
-  border: 1px solid #f58529;
-  outline: none;
 }
 
 .article-text {
@@ -186,6 +141,10 @@ input:focus {
   border-radius: 1vw;
   color: #f58529;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .article-btn:hover {
@@ -194,30 +153,8 @@ input:focus {
 
 /* Медиа-запрос для экранов шире 900px */
 @media (min-width: 900px) {
-  .buttons {
-    gap: 2vw;
-  }
-
-  .item-button {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .buttons-btn {
-    height: 7vw;
-  }
-
-  .wrapper-input {
-    margin-top: 2vw;
-  }
-
   .article-btn {
     width: 7vw;
-    height: 7vw;
-  }
-
-  input {
     height: 7vw;
   }
 

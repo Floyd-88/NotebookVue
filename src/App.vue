@@ -24,6 +24,8 @@ import LoaderVue from './components/UniversalComponent/LoaderVue.vue'
 import type { ArticleI } from './types/types'
 
 const articles = ref<ArticleI[]>([])
+const isLoader = ref<boolean>(false)
+const saveNotActiveUser = ref<number>(30000)
 
 const currentComponent = computed(() => {
   const buildType = import.meta.env.VITE_BUILD_TYPE
@@ -38,13 +40,18 @@ const currentComponent = computed(() => {
       return AssemblyVue_1
   }
 })
-const isLoader = ref<boolean>(false)
 
-onMounted(async () => {
-  
+// Настройка таймера для неактивности
+const { startTimer: startInactivityTimer, stopTimer: stopInactivityTimer } = useInactivityTimer(
+  saveArticles,
+  saveNotActiveUser.value
+)
+
+async function initialize() {
   isLoader.value = true
   window.addEventListener('beforeunload', handleBeforeUnload)
   document.addEventListener('visibilitychange', handleVisibilityChange)
+
   try {
     const fetchedArticles = await getArticles()
     if (fetchedArticles.length > 0) {
@@ -52,22 +59,21 @@ onMounted(async () => {
     }
   } finally {
     isLoader.value = false
-
-    startInactivityTimer() // Запускаем таймер
+    startInactivityTimer()
   }
-})
+}
 
-onUnmounted(async () => {
+onMounted(initialize)
+
+onUnmounted(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
   stopInactivityTimer() // Останавливаем таймер
 })
 
-// Настройка таймера для неактивности
-const { startTimer: startInactivityTimer, stopTimer: stopInactivityTimer } = useInactivityTimer(
-  saveArticles,
-  30000
-)
+async function saveArticles() {
+  await setArticles(articles.value)
+}
 
 function handleAddArticle(newArticle: ArticleI) {
   if (newArticle) {
@@ -78,17 +84,11 @@ function handleAddArticle(newArticle: ArticleI) {
 
 function handleChangeArticle(article: ArticleI) {
   const index = articles.value.findIndex((item) => item.id === article.id)
-
   if (index !== -1) {
     articles.value[index] = article
   }
 }
 
-async function saveArticles() {
-  await setArticles(articles.value)
-}
-
-// Обработка событий перед выгрузкой страницы
 function handleBeforeUnload(event: BeforeUnloadEvent) {
   event.preventDefault()
   saveArticles()

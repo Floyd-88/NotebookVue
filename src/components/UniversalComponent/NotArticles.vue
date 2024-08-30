@@ -1,5 +1,5 @@
 <template>
-  <div class="not-articles">Ни одной статьи не найдено</div>
+  <div class="not-articles">Ни одной статьи не найдено!</div>
 </template>
 
 <script setup lang="ts"></script>
