@@ -1,7 +1,7 @@
 {
   "name": "Notebook",
   "short_name": "Notebook",
-  "start_url": "/index.html",
+  "start_url": "/NotebookVue/",
   "display": "standalone",
   "description": "A simple notebook",
   "theme_color": "#000000",
