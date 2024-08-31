@@ -11,6 +11,9 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true
+      },
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
         name: 'Notebook',
@@ -50,6 +53,15 @@ export default defineConfig({
           }
         ],
       },
+      workbox: {
+        globPatterns: ['**/*.{css,woff2,png,svg,jpg,jpeg,js}'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst'
+          }
+        ]
+      }
     }),
   ],
   resolve: {

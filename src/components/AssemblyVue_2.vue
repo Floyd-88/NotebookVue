@@ -23,8 +23,9 @@ import ArticleButtons from './ArticleButtons.vue'
 
 const props = defineProps<{ articles: ArticleI[] }>()
 const emit = defineEmits<{
-  (e: 'saveArticles'): void
+  (e: 'handleAddArticle', payload: ArticleI): void
   (e: 'handleChangeArticle', payload: ArticleI): void
+  (e: 'saveArticles'): void
 }>()
 
 const articleNum = ref<number>(0)

@@ -9,6 +9,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AssemblyVueText from './AssemblyVueText.vue'
+import type { ArticleI } from '@/types/types';
+
+const emit = defineEmits<{
+  (e: 'handleAddArticle', payload: ArticleI): void
+  (e: 'handleChangeArticle', payload: ArticleI): void
+  (e: 'saveArticles'): void
+}>()
 
 const textArticle = ref<string>('')
 </script>
