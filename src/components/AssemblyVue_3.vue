@@ -22,10 +22,10 @@
 
 <script setup lang="ts">
 import { ref, watch, onUnmounted, onMounted } from 'vue'
-import ArticleList from './ArticleList.vue'
-import ArticleInput from './ArticleInput.vue'
-import AssemblyVueText from './AssemblyVueText.vue'
-import NotArticles from './UniversalComponent/NotArticles.vue'
+import ArticleList from '@/components/ArticleList.vue'
+import ArticleInput from '@/components/ArticleInput.vue'
+import AssemblyVueText from '@/components/AssemblyVueText.vue'
+import NotArticles from '@/components/UniversalComponent/NotArticles.vue'
 import type { ArticleI } from '@/types/types'
 
 defineProps<{ articles: ArticleI[] }>()

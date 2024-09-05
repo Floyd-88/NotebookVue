@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import AssemblyVueText from './AssemblyVueText.vue'
+import AssemblyVueText from '@/components/AssemblyVueText.vue'
 import type { ArticleI } from '@/types/types';
 
 const emit = defineEmits<{

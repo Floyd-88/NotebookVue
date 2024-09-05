@@ -16,10 +16,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import NotArticles from './UniversalComponent/NotArticles.vue'
+import NotArticles from '@/components/UniversalComponent/NotArticles.vue'
 import type { ArticleI } from '@/types/types'
-import AssemblyVueText from './AssemblyVueText.vue'
-import ArticleButtons from './ArticleButtons.vue'
+import AssemblyVueText from '@/components/AssemblyVueText.vue'
+import ArticleButtons from '@/components/ArticleButtons.vue'
 
 const props = defineProps<{ articles: ArticleI[] }>()
 const emit = defineEmits<{

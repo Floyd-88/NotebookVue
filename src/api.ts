@@ -1,4 +1,4 @@
-import type { ArticleI } from './types/types'
+import type { ArticleI } from '@/types/types'
 
 const apiHost = import.meta.env.VITE_API_HOST
 

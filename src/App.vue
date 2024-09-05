@@ -15,13 +15,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { getArticles, setArticles } from './api'
-import { useInactivityTimer } from './useInactivityTimer'
-import AssemblyVue_1 from './components/AssemblyVue_1.vue'
-import AssemblyVue_2 from './components/AssemblyVue_2.vue'
-import AssemblyVue_3 from './components/AssemblyVue_3.vue'
-import LoaderVue from './components/UniversalComponent/LoaderVue.vue'
-import type { ArticleI } from './types/types'
+import { getArticles, setArticles } from '@/api'
+import { useInactivityTimer } from '@/useInactivityTimer'
+import AssemblyVue_1 from '@/components/AssemblyVue_1.vue'
+import AssemblyVue_2 from '@/components/AssemblyVue_2.vue'
+import AssemblyVue_3 from '@/components/AssemblyVue_3.vue'
+import LoaderVue from '@/components/UniversalComponent/LoaderVue.vue'
+import type { ArticleI } from '@/types/types'
 
 const articles = ref<ArticleI[]>([])
 const isLoader = ref<boolean>(false)
@@ -30,11 +30,11 @@ const saveNotActiveUser = ref<number>(30000)
 const currentComponent = computed(() => {
   const buildType = import.meta.env.VITE_BUILD_TYPE
   switch (buildType) {
-    case 'сборка1':
+    case 'build1':
       return AssemblyVue_1
-    case 'сборка2':
+    case 'build2':
       return AssemblyVue_2
-    case 'сборка3':
+    case 'build3':
       return AssemblyVue_3
     default:
       return AssemblyVue_1
