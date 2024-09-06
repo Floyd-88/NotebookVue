@@ -1,23 +1,20 @@
 <template>
-  <div class="wrapper-input">
-    <button class="buttons-btn" @click="startNewArticle" v-if="isTextArticle">+</button>
-    <input
-      type="text"
-      placeholder="start typing|"
-      v-else
-      ref="titleInput"
-      v-model.trim="localTitleArticle"
-      @blur="handleInputBlur"
-      @keydown.enter="handleInputBlur"
-    />
-  </div>
+  <button class="buttons-btn" @click="startNewArticle" v-if="!isTextArticle">+</button>
+  <input
+    v-else
+    type="text"
+    placeholder="start typing|"
+    ref="titleInput"
+    v-model.trim="localTitleArticle"
+    @blur="handleInputBlur"
+    @keydown.enter="handleInputBlur"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick, watch } from 'vue'
 
 const props = defineProps<{
-  isTextArticle: boolean
   titleArticle: string
 }>()
 const emit = defineEmits<{
@@ -27,6 +24,7 @@ const emit = defineEmits<{
 
 const titleInput = ref<HTMLInputElement | null>(null)
 const localTitleArticle = ref(props.titleArticle)
+const isTextArticle = ref<boolean>(false)
 
 watch(
   () => props.titleArticle,
@@ -41,7 +39,9 @@ watch(localTitleArticle, (newValue) => {
 
 function startNewArticle() {
   localTitleArticle.value = ''
+  isTextArticle.value = true
   emit('updateTitle', '')
+
   nextTick(() => {
     titleInput.value?.focus()
   })
@@ -49,26 +49,23 @@ function startNewArticle() {
 
 function handleInputBlur() {
   emit('saveArticleIfNeeded')
+  isTextArticle.value = false
 }
 </script>
 
 <style scoped>
-.wrapper-input {
-  margin-top: 4vw;
-}
-
 .buttons-btn {
-  min-height: 14vw;
-  width: 100%;
-  color: #f58529;
-  background-color: #202020;
-  border: none;
-  border-radius: 1vw;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  white-space: pre-wrap;
+  height: 100%;
+  width: 100%;
+  background-color: #202020;
+  border: none;
+  border-radius: 1vw;
+  color: #f58529;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .buttons-btn:hover {
@@ -76,32 +73,21 @@ function handleInputBlur() {
 }
 
 input {
-  height: 14vw;
+  height: 100%;
   width: 100%;
   text-align: center;
   border: none;
   border-radius: 1vw;
   background-color: #202020;
-  color: #6f6f6f;
   box-sizing: border-box;
 }
 
 input:focus {
   border: 1px solid #f58529;
   outline: none;
+  color: #6f6f6f;
 }
 
 @media (min-width: 900px) {
-  .wrapper-input {
-    margin-top: 2vw;
-  }
-
-  .buttons-btn {
-    min-height: 7vw;
-  }
-
-  input {
-    height: 7vw;
-  }
 }
 </style>

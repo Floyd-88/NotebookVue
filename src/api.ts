@@ -1,6 +1,20 @@
 import type { ArticleI } from '@/types/types'
 
-const apiHost = import.meta.env.VITE_API_HOST
+const buildType = import.meta.env.VITE_BUILD_TYPE;
+
+const apiHost = (() => {
+  switch (buildType) {
+    case 'build1':
+      return import.meta.env.VITE_API_HOST_1;
+    case 'build2':
+      return import.meta.env.VITE_API_HOST_2;
+    case 'build3':
+      return import.meta.env.VITE_API_HOST_3;
+    default:
+      return import.meta.env.VITE_API_HOST_1;
+  }
+})();
+
 
 export const setArticles = async (data: ArticleI[]) => {
   try {

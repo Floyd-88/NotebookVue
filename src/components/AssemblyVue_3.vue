@@ -5,12 +5,13 @@
 
       <NotArticles v-if="articles.length === 0" />
 
-      <ArticleInput
-        :isTextArticle="isTextArticle"
-        :titleArticle="titleArticle"
-        @saveArticleIfNeeded="saveArticleIfNeeded"
-        @updateTitle="updateTitle"
-      />
+      <div class="wrapper-input">
+        <ArticleInput
+          :titleArticle="titleArticle"
+          @saveArticleIfNeeded="saveArticleIfNeeded"
+          @updateTitle="updateTitle"
+        />
+      </div>
     </div>
 
     <div class="article-text" v-else>
@@ -28,16 +29,15 @@ import AssemblyVueText from '@/components/AssemblyVueText.vue'
 import NotArticles from '@/components/UniversalComponent/NotArticles.vue'
 import type { ArticleI } from '@/types/types'
 
-defineProps<{ articles: ArticleI[] }>()
+const props = defineProps<{ articles: ArticleI[] }>()
 const emit = defineEmits<{
-  (e: 'handleAddArticle', payload: ArticleI): void
+  (e: 'handleAddArticle', payload: ArticleI[]): void
   (e: 'handleChangeArticle', payload: ArticleI): void
   (e: 'saveArticles'): void
 }>()
 
 const article = ref<ArticleI | null>(null)
 const titleArticle = ref<string>('')
-const isTextArticle = ref<boolean>(true)
 const textArticle = ref<string>('')
 
 function openArticle(articleItem: ArticleI) {
@@ -49,7 +49,6 @@ function closeArticle() {
   emit('saveArticles')
   textArticle.value = ''
   article.value = null
-  isTextArticle.value = true
 }
 
 function addArticle() {
@@ -59,20 +58,20 @@ function addArticle() {
       title: titleArticle.value,
       text: ''
     }
-    emit('handleAddArticle', newArticle)
+    let articles = [...props.articles, newArticle]
+    emit('handleAddArticle', articles)
+
     titleArticle.value = ''
   }
 }
 
 function updateTitle(title: string) {
   titleArticle.value = title
-  isTextArticle.value = false
 }
 
 function resetArticleMode() {
-  if (!isTextArticle.value) {
+  if (titleArticle.value.length > 0) {
     saveArticleIfNeeded()
-    isTextArticle.value = true
   }
 }
 
@@ -80,7 +79,6 @@ function saveArticleIfNeeded() {
   if (titleArticle.value.length > 0) {
     addArticle()
   }
-  isTextArticle.value = true
 }
 
 watch(textArticle, () => {
@@ -119,6 +117,11 @@ onUnmounted(async () => {
   overflow: auto;
   max-height: 100vh;
   padding-bottom: 10vw;
+}
+
+.wrapper-input {
+  height: 14vw;
+  margin-top: 4vw;
 }
 
 .article-text {
@@ -166,6 +169,11 @@ onUnmounted(async () => {
 
   .wrapper-items:hover {
     overflow: auto;
+  }
+
+  .wrapper-input {
+    margin-top: 2vw;
+    height: 7vw;
   }
 }
 </style>

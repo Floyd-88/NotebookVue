@@ -25,7 +25,7 @@ import type { ArticleI } from '@/types/types'
 
 const articles = ref<ArticleI[]>([])
 const isLoader = ref<boolean>(false)
-const saveNotActiveUser = ref<number>(30000)
+const saveNotActiveUser = ref<number>(2000)
 
 const currentComponent = computed(() => {
   const buildType = import.meta.env.VITE_BUILD_TYPE
@@ -75,9 +75,9 @@ async function saveArticles() {
   await setArticles(articles.value)
 }
 
-function handleAddArticle(newArticle: ArticleI) {
+function handleAddArticle(newArticle: ArticleI[]) {
   if (newArticle) {
-    articles.value.push(newArticle)
+    articles.value = newArticle
   }
   saveArticles()
 }

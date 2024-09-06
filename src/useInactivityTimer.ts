@@ -26,7 +26,7 @@ export function useInactivityTimer(callback: () => void, delay: number) {
   // Добавляем обработчики активности
   window.addEventListener('click', handleUserActivity)
   window.addEventListener('keypress', handleUserActivity)
-  window.addEventListener('mousemove', handleUserActivity)
+  // window.addEventListener('mousemove', handleUserActivity)
   window.addEventListener('scroll', handleUserActivity)
 
   // Очищаем таймеры и обработчики событий при уничтожении компонента
@@ -34,7 +34,7 @@ export function useInactivityTimer(callback: () => void, delay: number) {
     stopTimer()
     window.removeEventListener('click', handleUserActivity)
     window.removeEventListener('keypress', handleUserActivity)
-    window.removeEventListener('mousemove', handleUserActivity)
+    // window.removeEventListener('mousemove', handleUserActivity)
     window.removeEventListener('scroll', handleUserActivity)
   })
 
