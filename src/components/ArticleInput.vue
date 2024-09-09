@@ -1,5 +1,5 @@
 <template>
-  <button class="buttons-btn" @click="startNewArticle" v-if="!isTextArticle">+</button>
+  <button class="buttons-btn" @click="startNewArticle" v-if="isTextArticle">+</button>
   <input
     v-else
     type="text"
@@ -24,7 +24,7 @@ const emit = defineEmits<{
 
 const titleInput = ref<HTMLInputElement | null>(null)
 const localTitleArticle = ref(props.titleArticle)
-const isTextArticle = ref<boolean>(false)
+const isTextArticle = ref<boolean>(true)
 
 watch(
   () => props.titleArticle,
@@ -39,7 +39,7 @@ watch(localTitleArticle, (newValue) => {
 
 function startNewArticle() {
   localTitleArticle.value = ''
-  isTextArticle.value = true
+  isTextArticle.value = false
   emit('updateTitle', '')
 
   nextTick(() => {
@@ -49,7 +49,7 @@ function startNewArticle() {
 
 function handleInputBlur() {
   emit('saveArticleIfNeeded')
-  isTextArticle.value = false
+  isTextArticle.value = true
 }
 </script>
 

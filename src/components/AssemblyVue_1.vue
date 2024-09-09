@@ -21,10 +21,10 @@ const emit = defineEmits<{
 const article = ref<ArticleI | null>(null)
 const textArticle = ref<string>('')
 
-const initializeArticle = () => {
-  if (props.articles.length > 0) {
-    article.value = props.articles[0]
-    textArticle.value = props.articles[0].text || ''
+const updateArticle = (articles: ArticleI[]) => {
+  if (articles.length > 0) {
+    article.value = articles[0]
+    textArticle.value = articles[0].text || ''
   } else {
     article.value = null
     textArticle.value = ''
@@ -32,13 +32,12 @@ const initializeArticle = () => {
 }
 
 onMounted(() => {
-  initializeArticle()
+  updateArticle(props.articles)
 })
 
 watch(textArticle, (newValue) => {
   if (article.value) {
-    const updatedArticle = { ...article.value, text: newValue }
-    emit('handleChangeArticle', updatedArticle)
+    emit('handleChangeArticle', { ...article.value, text: newValue })
   } else {
     const newArticle: ArticleI = {
       id: 1,
@@ -50,19 +49,7 @@ watch(textArticle, (newValue) => {
   }
 })
 
-watch(
-  () => props.articles,
-  (newArticles) => {
-    if (newArticles.length > 0) {
-      article.value = newArticles[0]
-      textArticle.value = newArticles[0].text || ''
-    } else {
-      article.value = null
-      textArticle.value = ''
-    }
-  },
-  { immediate: true }
-)
+watch(() => props.articles, updateArticle, { immediate: true })
 </script>
 
 <style scoped>

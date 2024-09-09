@@ -39,9 +39,15 @@ const emit = defineEmits<{
 
 const articleNum = ref<number>(0)
 const textArticle = ref<string>('')
-
-const article = ref<ArticleI | null>(null)
 const titleArticle = ref<string>('')
+
+const initializeArticle = () => {
+  if (props.articles.length > 0) {
+    articleNum.value = 0
+    const initialArticle = props.articles[0]
+    textArticle.value = initialArticle.text
+  }
+}
 
 function addArticle() {
   if (titleArticle.value.length > 0) {
@@ -74,34 +80,11 @@ function resetArticleMode() {
   }
 }
 
-watch(textArticle, () => {
-  if (article.value) {
-    const updatedArticle = { ...article.value, text: textArticle.value }
-    emit('handleChangeArticle', updatedArticle)
-  }
-})
-
-// Обработка событий перед выгрузкой страницы
 function handleBeforeUnload(event: BeforeUnloadEvent) {
   event.preventDefault()
   saveArticleIfNeeded()
   event.returnValue = ''
 }
-
-onMounted(async () => {
-  window.addEventListener('beforeunload', handleBeforeUnload)
-})
-
-onUnmounted(async () => {
-  window.removeEventListener('beforeunload', handleBeforeUnload)
-})
-
-onMounted(() => {
-  if (props.articles.length > 0) {
-    const initialArticle = props.articles[0]
-    textArticle.value = initialArticle.text
-  }
-})
 
 function changeArticleNum(index: number) {
   articleNum.value = index
@@ -110,11 +93,20 @@ function changeArticleNum(index: number) {
   emit('saveArticles')
 }
 
-watch(textArticle, () => {
+watch(textArticle, (newText) => {
   if (props.articles[articleNum.value]) {
-    const updatedArticle = { ...props.articles[articleNum.value], text: textArticle.value }
+    const updatedArticle = { ...props.articles[articleNum.value], text: newText }
     emit('handleChangeArticle', updatedArticle)
   }
+})
+
+onMounted(async () => {
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  initializeArticle()
+})
+
+onUnmounted(async () => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
 })
 </script>
 

@@ -59,7 +59,7 @@ async function initialize() {
     }
   } finally {
     isLoader.value = false
-    startInactivityTimer()
+    // startInactivityTimer()
   }
 }
 

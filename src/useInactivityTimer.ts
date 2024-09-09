@@ -1,41 +1,36 @@
-import { ref, onUnmounted } from 'vue'
+import { onUnmounted } from 'vue'
 
 // Таймер для отслеживания неактивности
 export function useInactivityTimer(callback: () => void, delay: number) {
-  const inactivityTimeout = ref<number | null>(null)
+  let inactivityTimeout: number | null = null
 
   const startTimer = () => {
     stopTimer() 
-    inactivityTimeout.value = setTimeout(() => {
-      callback()
-    }, delay)
+    inactivityTimeout = window.setTimeout(callback, delay)
   }
 
   const stopTimer = () => {
-    if (inactivityTimeout.value) {
-      clearTimeout(inactivityTimeout.value)
-      inactivityTimeout.value = null
+    if (inactivityTimeout !== null) {
+      clearTimeout(inactivityTimeout)
+      inactivityTimeout = null
     }
   }
 
-  // Обработчик активности пользователя
   const handleUserActivity = () => {
-    startTimer() // Сбрасываем таймер при активности
+    startTimer()
   }
 
-  // Добавляем обработчики активности
   window.addEventListener('click', handleUserActivity)
   window.addEventListener('keypress', handleUserActivity)
-  // window.addEventListener('mousemove', handleUserActivity)
   window.addEventListener('scroll', handleUserActivity)
+  window.addEventListener('input', handleUserActivity)
 
-  // Очищаем таймеры и обработчики событий при уничтожении компонента
   onUnmounted(() => {
     stopTimer()
     window.removeEventListener('click', handleUserActivity)
     window.removeEventListener('keypress', handleUserActivity)
-    // window.removeEventListener('mousemove', handleUserActivity)
     window.removeEventListener('scroll', handleUserActivity)
+    window.removeEventListener('input', handleUserActivity)
   })
 
   return {
